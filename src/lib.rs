@@ -1,7 +1,9 @@
 use std::{collections::HashMap, fmt::Display, num::ParseIntError};
 
-use json::JsonValue;
-use util::{FromJsonError, MaybeExist};
+#[cfg(feature = "json_parsing")]
+use crate::util::FromJsonError;
+
+use util::MaybeExist;
 
 pub mod client;
 pub mod id;
@@ -37,7 +39,8 @@ impl Display for Trip {
     }
 }
 impl Trip {
-    pub fn from_json(json: &mut JsonValue) -> MaybeExist<Trip> {
+    #[cfg(feature = "json_parsing")]
+    pub fn from_json(json: &mut json::JsonValue) -> MaybeExist<Trip> {
         MaybeExist::from_option_unknown(json.take_string()).and_then(|x| {
             if x.is_empty() {
                 MaybeExist::Not
@@ -56,7 +59,8 @@ impl Timestamp {
         text.parse().map(Timestamp)
     }
 
-    pub fn from_json(value: &JsonValue) -> Result<Timestamp, FromJsonError> {
+    #[cfg(feature = "json_parsing")]
+    pub fn from_json(value: &json::JsonValue) -> Result<Timestamp, FromJsonError> {
         value
             .as_u64()
             .map(Timestamp)

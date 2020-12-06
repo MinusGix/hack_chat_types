@@ -1,17 +1,13 @@
 use std::{collections::HashMap, convert::TryFrom};
 
+#[cfg(feature = "json_parsing")]
+use crate::util::{as_array, as_object, FromJson, FromJsonError, IntoJson};
+#[cfg(feature = "json_parsing")]
 use json::JsonValue;
 
 use crate::{
-    id,
-    util::Color,
-    util::Command,
-    util::FromJson,
-    util::FromJsonError,
-    util::MaybeExist,
-    util::ServerCommand,
-    util::{as_array, as_object},
-    Channel, Hash, Nickname, ServerApi, SessionId, Text, Timestamp, Trip, UserId, UserLevel,
+    id, util::Color, util::Command, util::MaybeExist, util::ServerCommand, Channel, Hash, Nickname,
+    ServerApi, SessionId, Text, Timestamp, Trip, UserId, UserLevel,
 };
 
 /// The type of the user. Deprecated in v2 and replaced with levels.
@@ -26,6 +22,7 @@ pub enum UserType {
 }
 impl UserType {
     // TODO: should this use a MaybeExist?
+    #[cfg(feature = "json_parsing")]
     pub fn from_json(value: &JsonValue) -> Option<UserType> {
         value
             .as_str()
@@ -61,6 +58,7 @@ impl Command for OnlineSet {
     const CMD: &'static str = "onlineSet";
 }
 impl ServerCommand for OnlineSet {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for OnlineSet {
     fn from_json(mut json: JsonValue, server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -119,6 +117,7 @@ pub struct OnlineSetUser {
     /// The user's permission level.
     pub level: Option<UserLevel>,
 }
+#[cfg(feature = "json_parsing")]
 impl FromJson for OnlineSetUser {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         const IS_ME: &str = "isme";
@@ -178,6 +177,7 @@ impl Command for Session {
     const CMD: &'static str = "session";
 }
 impl ServerCommand for Session {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for Session {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -240,6 +240,7 @@ impl Command for Info {
     const CMD: &'static str = "info";
 }
 impl ServerCommand for Info {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for Info {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -292,6 +293,7 @@ impl Command for Chat {
     const CMD: &'static str = "chat";
 }
 impl ServerCommand for Chat {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for Chat {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -346,6 +348,7 @@ impl Command for Captcha {
     const CMD: &'static str = "captcha";
 }
 impl ServerCommand for Captcha {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for Captcha {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -380,6 +383,7 @@ impl Command for Emote {
     const CMD: &'static str = "emote";
 }
 impl ServerCommand for Emote {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for Emote {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -424,6 +428,7 @@ impl Command for Invite {
     const CMD: &'static str = "invite";
 }
 impl ServerCommand for Invite {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for Invite {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -471,6 +476,7 @@ impl Command for OnlineAdd {
     const CMD: &'static str = "onlineAdd";
 }
 impl ServerCommand for OnlineAdd {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for OnlineAdd {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -518,6 +524,7 @@ impl Command for OnlineRemove {
     const CMD: &'static str = "onlineRemove";
 }
 impl ServerCommand for OnlineRemove {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for OnlineRemove {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         if json[id::CMD].as_str() != Some(Self::CMD) {
@@ -550,6 +557,7 @@ impl Command for Warn {
     const CMD: &'static str = "warn";
 }
 impl ServerCommand for Warn {}
+#[cfg(feature = "json_parsing")]
 impl FromJson for Warn {
     fn from_json(mut json: JsonValue, _server_api: ServerApi) -> Result<Self, FromJsonError> {
         let channel = json[id::CHANNEL].take_string().map(Channel::from);

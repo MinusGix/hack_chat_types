@@ -1,8 +1,7 @@
 use std::{convert::TryFrom, num::ParseIntError};
 
+#[cfg(feature = "json_parsing")]
 use json::JsonValue;
-
-use crate::ServerApi;
 
 /// Utility type where you have a val, not have a val, or be unknown as to which it is.
 /// Primarily for trips/hashes
@@ -161,10 +160,11 @@ impl TryFrom<&str> for Color {
 }
 
 /// Convert the thing (usually a command) into json.
+#[cfg(feature = "json_parsing")]
 pub trait IntoJson {
     /// The server format only applies when deciding how to format the data inside
     /// If you're using a command that's only for a specific format, then it will still be created.
-    fn into_json(self, server_api: ServerApi) -> JsonValue;
+    fn into_json(self, server_api: crate::ServerApi) -> JsonValue;
 }
 /// Mark a command, and the name of its CMD property.
 pub trait Command {
@@ -175,6 +175,7 @@ pub trait ClientCommand: Command {}
 /// Marker trait for commands sent by the server
 pub trait ServerCommand: Command {}
 
+#[cfg(feature = "json_parsing")]
 #[derive(Debug, Clone, PartialEq)]
 pub enum FromJsonError {
     InvalidStructure,
@@ -182,11 +183,13 @@ pub enum FromJsonError {
     InvalidCommandField(&'static str),
 }
 /// For extracting a command from the json sent by the server.
+#[cfg(feature = "json_parsing")]
 pub trait FromJson: Sized {
-    fn from_json(json: JsonValue, server_api: ServerApi) -> Result<Self, FromJsonError>;
+    fn from_json(json: JsonValue, server_api: crate::ServerApi) -> Result<Self, FromJsonError>;
 }
 
 /// Utility function for converting to an array, as the json lib does not supply it
+#[cfg(feature = "json_parsing")]
 pub fn as_array(value: JsonValue) -> Option<Vec<JsonValue>> {
     match value {
         JsonValue::Array(arr) => Some(arr),
@@ -194,6 +197,7 @@ pub fn as_array(value: JsonValue) -> Option<Vec<JsonValue>> {
     }
 }
 /// Utility function for converting to an object, as the json lib does not supply it
+#[cfg(feature = "json_parsing")]
 pub fn as_object(value: JsonValue) -> Option<json::object::Object> {
     match value {
         JsonValue::Object(obj) => Some(obj),
