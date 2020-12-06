@@ -1,0 +1,12 @@
+pub const CMD: &str = "cmd";
+pub const CHANNEL: &str = "channel";
+pub const TEXT: &str = "text";
+pub const NICK: &str = "nick";
+pub const TIME: &str = "time";
+pub const TRIP: &str = "trip";
+pub const USER_TYPE: &str = "uType";
+pub const HASH: &str = "hash";
+pub const LEVEL: &str = "level";
+pub const USER_ID: &str = "userid";
+pub const COLOR: &str = "color";
+pub const IS_BOT: &str = "isBot";
