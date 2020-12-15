@@ -672,6 +672,17 @@ pub mod synthetic {
 
     #[derive(Debug, Clone)]
     pub enum EmoteConversionError {
+        /// Failed to find the user
+        NoUserFound,
+    }
+
+    #[derive(Debug, Clone)]
+    pub enum EmoteInfoConversionError {
+        /// No user specified.
+        NoUser,
+        /// There was no @ prefix
+        NoAt,
+        /// Failed to find the user
         NoUserFound,
     }
 
@@ -707,6 +718,31 @@ pub mod synthetic {
             })
         }
 
-        // TODO: convert from info structure
+        pub fn from_info(
+            users: &Users,
+            info: &super::Info,
+        ) -> Result<Self, EmoteInfoConversionError> {
+            let mut split = info.text.splitn(2, ' ');
+            let from = split.next().ok_or(EmoteInfoConversionError::NoUser)?;
+            let from = from
+                .strip_prefix('@')
+                .ok_or(EmoteInfoConversionError::NoAt)?;
+
+            let user_id = users
+                .find_online_nick(from)
+                .map(|x| x.0)
+                .ok_or(EmoteInfoConversionError::NoUserFound)?;
+
+            let text = split
+                .next()
+                .map(|x| x.to_string())
+                .unwrap_or_else(String::new);
+
+            Ok(Self {
+                text,
+                user_id,
+                time: info.time,
+            })
+        }
     }
 }
